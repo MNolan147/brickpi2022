@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="page-header" id="banner">
+        <div class="row">
+            <h1>Sensor View</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Sensor Name</th>
+                        <th scope="col">Sensor Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sensor in data.keys() %}
+                    <tr>
+                        <th scope="row">{{sensor}}</th>
+                        <td id="{{sensor}}">{{data[sensor]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+    <div class="row" id="message">
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="/static/js/sensor.js"></script> <!-- JSON HELPER -->
+{% endblock %}

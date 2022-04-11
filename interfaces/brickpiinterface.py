@@ -21,8 +21,9 @@ class SensorStatus():
 class BrickPiInterface():
 
     #Initialise timelimit and logging
-    def __init__(self, timelimit=20, logger=logging.getLogger()):
+    def __init__(self, timelimit=20, logger=logging.getLogger(), position=(0,0)):
         self.logger = logger
+        self.position = position
         self.CurrentCommand = "loading"
         self.Configured = False #is the robot yet Configured?
         self.BP = None
@@ -604,8 +605,8 @@ if __name__ == '__main__':
     ROBOT = BrickPiInterface(timelimit=10)  #20 second timelimit before
     bp = ROBOT.BP; bp.reset_all(); time.sleep(2) #this will halt previou program is still running
     ROBOT.configure_sensors() #This takes 4 seconds
-    input("Press enter to start: ")
-    ROBOT.spin_medium_motor(300)
-    ROBOT.rotate_power_degrees_IMU(17,90)
     print(ROBOT.get_all_sensors())
+    ROBOT.move_power_time(20, 2)
+
     ROBOT.safe_exit()
+    

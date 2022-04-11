@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="page-header" id="banner">
+        <div class="row">
+            <h1>Mission</h1>
+            <h2>Create mission</h2>
+            <form action="/mission" method="POST">
+                <label>medic on Duty:</label><br>
+                <input type="text" id="medic" name="medic" value="{{session['name']}}"><br>
+                <label>Location:</label><br>
+                <input type="text" id="location" name="location" value=""><br>
+                <label>Medical Notes:</label><br>
+                <input type="text" id="medical-notes" name="medical-notes" value=""><br>
+                <label>Start Time:</label><br>
+                <input type="datetime" id="start-time" name="start-time" value=""><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+    <div class="row" id="message">
+    </div>
+{% endblock %}

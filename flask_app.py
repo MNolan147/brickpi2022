@@ -1,8 +1,12 @@
+from datetime import datetime
+#from types import None
+from xml.sax.xmlreader import Locator
 from flask import Flask, render_template, session, request, redirect, flash, url_for, jsonify, Response, logging
 from interfaces import databaseinterface, camerainterface, soundinterface
 import robot #robot is class that extends the brickpi class
 import global_vars as GLOBALS #load global variables
 import logging, time
+from datetime import *
 
 #Creates the Flask Server Object
 app = Flask(__name__); app.debug = True
@@ -99,36 +103,99 @@ def sensors():
 
 # YOUR FLASK CODE------------------------------------------------------------------------
 
+@app.route('/shoot', methods=['GET','POST'])
+def shoot():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.spin_medium_motor(-1000)
+    return jsonify(data)    
+
+@app.route('/moveforward', methods=['GET','POST'])
+def moveforward():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.move_power(30)
+    return jsonify(data)  
+
+@app.route('/movebackward', methods=['GET','POST'])
+def movebackward():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.move_power(-30)
+    return jsonify(data)
+
+@app.route('/rotateright90', methods=['GET','POST'])
+def rotateright90():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.rotate_power_degrees_IMU(15, 90)
+    return jsonify(data)
+
+@app.route('/rotateleft90', methods=['GET','POST'])
+def rotateleft90():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.rotate_power_degrees_IMU(15, -90)
+    return jsonify(data)
+
+@app.route('/rotateright', methods=['GET','POST'])
+def rotateright():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.rotate_power(30)
+    return jsonify(data)
+
+@app.route('/rotateleft', methods=['GET','POST'])
+def rotateleft():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.rotate_power(-30)
+    return jsonify(data)
+
+@app.route('/scan', methods=['GET', 'POST'])
+def scan():
+    data = {}
+    if GLOBALS.ROBOT:
+        data = GLOBALS.ROBOT.scan(10, 360, 5)
+    return jsonify(data)
 
 
+@app.route('/stop', methods=['GET','POST'])
+def stop():
+    data = {}
+    if GLOBALS.ROBOT:
+        GLOBALS.ROBOT.stop_all()
+    return jsonify(data) 
 
+# mission view page
+# allows medic manager to create a mission and save data for that mission
+@app.route('/mission', methods=['GET', 'POST'])
+def mission():
+    data = {}
+    # if request method is POST
+    if request.method == "POST":
+        # get form data
+        userid = session['userid']
+        notes = request.form.get('medical-notes')
+        location = request.form.get('location')
+        if request.form.get('start-time'):
+            starttime = request.form.get('start-time')
+        else:
+            starttime = datetime.now().timestamp()
+        # insert into mission
+        GLOBALS.DATABASE.ModifyQuery('INSERT INTO mission (location, notes, starttime, userid) VALUES (?,?,?,?)', (location,notes,starttime,userid))
+        # select the mission id and save to session data
+        # send mission history to page
+    return render_template('mission.html', data=data)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# allows medic manager to test that all sensors are working
+@app.route('/sensor-view', methods=['GET','POST'])
+def sensorview():
+    if GLOBALS.ROBOT:
+        data = GLOBALS.ROBOT.get_all_sensors()
+    else:
+        return redirect('/dashboard')
+    return render_template('sensorview.html', data=data)
 
 
 

@@ -28,5 +28,7 @@ function drawmap() {
    }
 }
 
-load_map();
-drawmap();
+
+
+load_map(); //loads map
+//drawmap();
