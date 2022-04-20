@@ -1,0 +1,48 @@
+Test Log:
+
+Time:
+    Issue:
+    Notes:
+    Fix:
+    Result:
+
+11/04/2022 11:39:33 AM: 
+    Issue: turns not exact degrees
+    Fix: adjust margin of error
+    Result: Turns are exact
+
+11/04/2022 11:41:45 AM:
+    Issue: ZeroDevisionError raised when calculating x value
+    Notes: logs suggest that the error occurs when iterating over an empty array 
+    Fix: ignore ampty arrays
+    Result: works for most cases but, fails when xpoints is empty and ypoints is zero
+
+11/04/2022 11:54:12 AM:
+    Issue: result of previous
+    Notes: this likely occurs as the funtion doesn't account for no change in x
+    Fix: bypass calculation if robot x and point x are the same by retuning that value
+    Result: succsessfully completes function
+
+11/04/2022 12:20:12 PM:
+    Issue: minimal walls are discovered at the end of the scan
+    Notes: This is perhaps an issue with the environment
+    Fix: test in a location with exact flat walls
+    Result: behaviour continued
+
+11/04/2022 12:32:56 PM:
+    Issue: walls failed to be discovered
+    Notes: By inspecting the logs it was found that the grid was being generated incorrectly
+    Fix: grid generates points on regular grid. adjust other code to comply with changes
+    Result: Behaviour contiued
+
+11/04/2022 1:19:45 PM:
+    Issue: walls failed to be discovered
+    Notes: logs showed that walls were being duplicated on generation (i.e., there were 2 walls at point (0.5,0))
+    Fix: tweak map generator to store walls and to store them when a duplicate comes up rather than generate new walls
+    Result: Behaviour contiued
+
+13/04/2022 11:30:00 AM:
+    Issue: walls failed to be discovered
+    Notes: N/A
+    Fix: try in official maze
+    Result: walls successfully detected

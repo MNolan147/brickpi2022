@@ -464,7 +464,7 @@ class BrickPiInterface():
             lastrun = time.time()
             gyrospeed = self.get_gyro_sensor_IMU()[2] #rotate around z-axis
             totaldegreesrotated += (time.time() - lastrun)*gyrospeed
-            self.log(totaldegreesrotated)
+            #self.log(totaldegreesrotated)
         self.stop_all()
 
         data['action'] = self.CurrentCommand

@@ -16,15 +16,12 @@
             <button id="sensors" type="button" class="btn btn-info" onclick="new_ajax_helper('/sensors');">Sensors</button>
         </div>
         <div class="row">
-            <button id="shoot" type="button" class="btn btn-danger" onclick="new_ajax_helper('/shoot');">Shoot</button>
-            <button id="moveforward" type="button" class="btn btn-danger" onclick="new_ajax_helper('/moveforward');">Move Forward</button>
-            <button id="movebackward" type="button" class="btn btn-danger" onclick="new_ajax_helper('/movebackward');">Move Backward</button>
-            <button id="rotaterigh90" type="button" class="btn btn-danger" onclick="new_ajax_helper('/rotateright90');">Rotate Right 90</button>
-            <button id="rotateleft90" type="button" class="btn btn-danger" onclick="new_ajax_helper('/rotateleft90');">Rotate Left 90</button>
-            <button id="rotateright" type="button" class="btn btn-danger" onclick="new_ajax_helper('/rotateright');">Rotate Right</button>
-            <button id="rotateleft" type="button" class="btn btn-danger" onclick="new_ajax_helper('/rotateleft');">Rotate Left</button>
-            <button id="scan" type="button" class="btn btn-danger" onclick="new_ajax_helper('/scan');">Scan</button>
-            <button id="stop" type="button" class="btn btn-danger" onclick="new_ajax_helper('/stop');">Stop All</button>
+            <button id="shoot" type="button" class="btn btn-danger btn-movement" onclick="new_ajax_helper('/shoot');"></button>
+            <button id="moveforward" type="button" class="btn btn-danger btn-movement" onclick="new_ajax_helper('/moveforward');"></button>
+            <button id="movebackward" type="button" class="btn btn-danger btn-movement" onclick="new_ajax_helper('/movebackward');"></button>
+            <button id="rotateright" type="button" class="btn btn-danger btn-movement" onclick="new_ajax_helper('/rotateright');"></button>
+            <button id="rotateleft" type="button" class="btn btn-dange btn-movementr" onclick="new_ajax_helper('/rotateleft');"></button>
+            <button id="stop" type="button" class="btn btn-danger btn-movement" onclick="new_ajax_helper('/stop');">Stop All</button>
         </div>
         <div class="row">
             <div id="videobox" class="col">
@@ -39,4 +36,5 @@
     <script> robot_enabled = {{robot_enabled}}; </script>
     <script src="/static/js/dashboard.js"></script> 
     <script src="/static/js/mapping.js"></script> 
+    <script src="/static/js/robotcontrols.js"></script>
 {% endblock %}

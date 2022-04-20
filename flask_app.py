@@ -124,41 +124,19 @@ def movebackward():
         GLOBALS.ROBOT.move_power(-30)
     return jsonify(data)
 
-@app.route('/rotateright90', methods=['GET','POST'])
-def rotateright90():
-    data = {}
-    if GLOBALS.ROBOT:
-        GLOBALS.ROBOT.rotate_power_degrees_IMU(15, 90)
-    return jsonify(data)
-
-@app.route('/rotateleft90', methods=['GET','POST'])
-def rotateleft90():
-    data = {}
-    if GLOBALS.ROBOT:
-        GLOBALS.ROBOT.rotate_power_degrees_IMU(15, -90)
-    return jsonify(data)
-
 @app.route('/rotateright', methods=['GET','POST'])
 def rotateright():
     data = {}
     if GLOBALS.ROBOT:
-        GLOBALS.ROBOT.rotate_power(30)
+        GLOBALS.ROBOT.rotate_power(15)
     return jsonify(data)
 
 @app.route('/rotateleft', methods=['GET','POST'])
 def rotateleft():
     data = {}
     if GLOBALS.ROBOT:
-        GLOBALS.ROBOT.rotate_power(-30)
+        GLOBALS.ROBOT.rotate_power(-15)
     return jsonify(data)
-
-@app.route('/scan', methods=['GET', 'POST'])
-def scan():
-    data = {}
-    if GLOBALS.ROBOT:
-        data = GLOBALS.ROBOT.scan(10, 360, 5)
-    return jsonify(data)
-
 
 @app.route('/stop', methods=['GET','POST'])
 def stop():
@@ -169,8 +147,8 @@ def stop():
 
 # mission view page
 # allows medic manager to create a mission and save data for that mission
-@app.route('/mission', methods=['GET', 'POST'])
-def mission():
+@app.route('/create-mission', methods=['GET', 'POST'])
+def createmission():
     data = {}
     # if request method is POST
     if request.method == "POST":
@@ -186,7 +164,12 @@ def mission():
         GLOBALS.DATABASE.ModifyQuery('INSERT INTO mission (location, notes, starttime, userid) VALUES (?,?,?,?)', (location,notes,starttime,userid))
         # select the mission id and save to session data
         # send mission history to page
-    return render_template('mission.html', data=data)
+    return render_template('createmission.html', data=data)
+
+@app.route('/mission', methods=['GET','POST'])
+def mission():
+    data = {}
+    return render_template('mission.html',data=data)
 
 # allows medic manager to test that all sensors are working
 @app.route('/sensor-view', methods=['GET','POST'])
@@ -263,4 +246,8 @@ def logout():
 #---------------------------------------------------------------------------
 #main method called web server application
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True) #runs a local server on port 5000
+    try:
+        app.run(host='0.0.0.0', port=5000, debug=True, threaded=True) #runs a local server on port 5000
+    finally:
+        if GLOBALS.ROBOT:
+            GLOBALS.ROBOT.safe_exit()
