@@ -1,19 +1,23 @@
-document.addEventListener("keydown", e => {
-    keycode = e.code
-    switch (keycode) {
-        case "KeyW":
+document.addEventListener("keydown", function(e){
+    if (!e.repeat){
+        key = e.key.toLowerCase();
+        if (key === 'w') {
             new_ajax_helper("/moveforward")
-        case "KeyS":
+        } else if (key === 's') {
             new_ajax_helper("/movebackward")
-        case "KeyA":
-            new_ajax_helper("/turnleft")
-        case "KeyD":
-            new_ajax_helper("/turnright")
-        case "Space":
+        } else if (key === 'a') {
+            new_ajax_helper("/rotateleft")
+        } else if (key === 'd') {
+            new_ajax_helper("/rotateright")
+        } else if (key === ' ') {
             new_ajax_helper("/shoot")
+        }
     }
 });
 
-document.addEventListener("keyup", e => {
-    new_ajax_helper("/stop")
+document.addEventListener("keyup", function(e){
+    key = e.key.toLowerCase()
+    if (key !== ' '){
+        new_ajax_helper('/stop');
+    }
 });

@@ -3,8 +3,8 @@
 from interfaces.brickpiinterface import *
 import grid
 import global_vars as GLOBALS
-import logging
-import math
+import logging, math
+import numpy as np
 
 """
     Proposed Algorithm:
@@ -28,6 +28,95 @@ class Robot(BrickPiInterface):
         self.rotate_power_degrees_IMU(15,90,11.0)
         self.position=(xpos/squaresize,ypos/squaresize)
         return self.position
+    
+    def move_distance_encoder(self,distanceCm,direction=1,speed=150,power=300):
+        distance = (direction*distanceCm*360)/(np.pi*5.6)
+        BP = self.BP
+        try:
+            self.CurrentCommand = "move_distance_encoder"
+            symbol = '<'
+            if distance == 0:
+                return
+            elif distance < 0:
+                symbol = '<='
+            else:
+                symbol = '>='
+            BP.offset_motor_encoder(BP.PORT_A, BP.get_motor_encoder(BP.PORT_A)) # reset encoder A
+            BP.offset_motor_encoder(BP.PORT_D, BP.get_motor_encoder(BP.PORT_D)) # reset encoder D
+            BP.set_motor_limits(BP.PORT_A, power, speed)    # float motor D
+            BP.set_motor_limits(BP.PORT_D, power, speed)          # optionally set a power limit (in percent) and a speed limit (in Degrees Per Second)
+            while self.CurrentCommand == "move_distance_encoder":
+                BP.set_motor_position(BP.PORT_D, distance+10)    # set motor A's target position to the current position of motor D
+                BP.set_motor_position(BP.PORT_A, distance+10)
+                time.sleep(0.02)
+                if eval("BP.get_motor_encoder(BP.PORT_D)" + symbol + "distance") or eval("BP.get_motor_encoder(BP.PORT_A)" + symbol + "distance"):
+                    break
+                #print("A:  " + str(distance+10) + "   " + str(BP.get_motor_encoder(BP.PORT_A)))
+                #print("D:  " + str(distance+10) + "   " + str(BP.get_motor_encoder(BP.PORT_D)))
+            return (((BP.get_motor_encoder(BP.PORT_A)+BP.get_motor_encoder(BP.PORT_D))/2)*(np.pi*5.6))/(direction*360)
+        except KeyboardInterrupt: # except the program gets interrupted by Ctrl+C on the keyboard.
+            BP.reset_all()
+        return
+
+    def move_encoder(self,direction=1,speed=150,power=300):
+        BP = self.BP
+        try:
+            self.CurrentCommand = "move_encoder"
+            BP.offset_motor_encoder(BP.PORT_A, BP.get_motor_encoder(BP.PORT_A)) # reset encoder A
+            BP.offset_motor_encoder(BP.PORT_D, BP.get_motor_encoder(BP.PORT_D)) # reset encoder D
+            BP.set_motor_limits(BP.PORT_A, power, speed)    # float motor D
+            BP.set_motor_limits(BP.PORT_D, power, speed)          # optionally set a power limit (in percent) and a speed limit (in Degrees Per Second)
+            while self.CurrentCommand == "move_encoder":
+                BP.set_motor_position(BP.PORT_D, BP.get_motor_encoder(BP.PORT_A)+(direction*5))    # set motor A's target position to the current position of motor D
+                BP.set_motor_position(BP.PORT_A, BP.get_motor_encoder(BP.PORT_D)+(direction*5))
+                time.sleep(0.02)
+            return (((BP.get_motor_encoder(BP.PORT_A)+BP.get_motor_encoder(BP.PORT_D))/2)*(np.pi*5.6))/(direction*360)
+        except KeyboardInterrupt: # except the program gets interrupted by Ctrl+C on the keyboard.
+            BP.reset_all()
+        return
+
+    def turnLeft(self,angle,speed=100,power=100):   #power percent, degrees/second, degrees
+        BP = self.BP
+        degrees = angle*2-2
+        try:
+            BP.offset_motor_encoder(BP.PORT_A, BP.get_motor_encoder(BP.PORT_A)) # reset encoder A
+            BP.offset_motor_encoder(BP.PORT_D, BP.get_motor_encoder(BP.PORT_D)) # reset encoder D
+            BP.set_motor_limits(BP.PORT_A, -1*power, speed)    # float motor D
+            BP.set_motor_limits(BP.PORT_D, power, speed)          # optionally set a power limit (in percent) and a speed limit (in Degrees Per Second)
+            while True:
+                BP.set_motor_position(BP.PORT_D, degrees+5)    # set motor A's target position to the current position of motor D
+                BP.set_motor_position(BP.PORT_A, -1*degrees-5)
+                time.sleep(0.02)
+                if BP.get_motor_encoder(BP.PORT_D) >= degrees or BP.get_motor_encoder(BP.PORT_A) <= -1*degrees:
+                    break
+                #print("A:  " + str(-1*degrees+10) + "   " + str(BP.get_motor_encoder(BP.PORT_A)))
+                #print("D:  " + str(degrees-10) + "   " + str(BP.get_motor_encoder(BP.PORT_D)))
+        except KeyboardInterrupt: # except the program gets interrupted by Ctrl+C on the keyboard.
+            BP.reset_all()
+        return 
+
+    def turnRight(self,angle,speed=100,power=100):
+        BP = self.BP
+        degrees = angle*2+5
+        try:
+            BP.offset_motor_encoder(BP.PORT_A, BP.get_motor_encoder(BP.PORT_A)) # reset encoder A
+            BP.offset_motor_encoder(BP.PORT_D, BP.get_motor_encoder(BP.PORT_D)) # reset encoder D
+            BP.set_motor_limits(BP.PORT_D, -1*power, speed)    # float motor D
+            BP.set_motor_limits(BP.PORT_A, power, speed)          # optionally set a power limit (in percent) and a speed limit (in Degrees Per Second)
+            while True:
+                BP.set_motor_position(BP.PORT_A, degrees+10)    # set motor A's target position to the current position of motor D
+                BP.set_motor_position(BP.PORT_D, -1*degrees-10)
+                time.sleep(0.02)
+                if BP.get_motor_encoder(BP.PORT_A) >= degrees or BP.get_motor_encoder(BP.PORT_D) <= -1*degrees:
+                    break
+                #print("D:  " + str(-1*degrees-10) + "   " + str(BP.get_motor_encoder(BP.PORT_D)))
+                #print("A:  " + str(degrees+10) + "   " + str(BP.get_motor_encoder(BP.PORT_A)))
+        except KeyboardInterrupt: # except the program gets interrupted by Ctrl+C on the keyboard.
+            BP.reset_all()
+        return
+ 
+    def get_new_position(self):
+        pass    
 
     def scan(self, power, degrees, squaresize=30, marginoferror=3, robotposition=(0,0)):
         self.log("BEGIN SCAN")
@@ -241,19 +330,6 @@ class Robot(BrickPiInterface):
                 cquad = quad
                 distance = quaddistances[quad]
 
-    # Create a function to move time and power which will stop if colour is detected or wall has been found
-    
-    
-    
-
-    #Create a function to search for victim
-    
-
-    
-    
-    
-    #Create a routine that will effective search the maze and keep track of where the robot has been.
-
 def linear_equation_y(point1,point2,x):
     m = (point2[1]-point1[1])/(point2[0]-point1[0])
     c = point2[1]-m*point2[0]
@@ -285,9 +361,8 @@ if __name__ == '__main__':
     ROBOT = Robot(timelimit=10)  #10 second timelimit before
     bp = ROBOT.BP
     ROBOT.configure_sensors() #This takes 4 seconds
-    time.sleep(2)
     try:
-        ROBOT.log(ROBOT.calibrate_position(42))
+        """ROBOT.log(ROBOT.calibrate_position(42))
         ROBOT.log(ROBOT.get_orientation_IMU())
         # Scan school test
         points = ROBOT.scan(9, -360, 42, 30)
@@ -295,8 +370,9 @@ if __name__ == '__main__':
         #points = ROBOT.scan(9, -360, 15)
         ROBOT.log(points)
         
-        ROBOT.interpret(points, boundaries)
-
+        ROBOT.interpret(points, boundaries)"""
+        distcm = ROBOT.move_distance_encoder(30)
+        print(distcm)
         sensordict = ROBOT.get_all_sensors()
         ROBOT.log(sensordict)
     finally:

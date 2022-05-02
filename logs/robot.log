@@ -12081,3 +12081,29 @@ INFO:root:Current found walls are at -1,1 with positions [(-1, 0.5), (-1.5, 1)]
 INFO:root:{'colour': 'Brown', 'battery': 10.096, 'compass': 50, 'orientation': (129.5625, -4.5, -161.8125), 'gyro': (-0.25, 1.1875, -2.4375), 'temperature': 33, 'ultrasonic': 15.7, 'acceleration': (-0.28, 0.18, -0.1), 'thermal': 22.0}
 INFO:root:BRICKPIINTERFACE: Exiting the Thermal Sensor Thread
 INFO:root:Exiting
+INFO:root:BRICKPIINTERFACE: Starting thermal sensor thread
+INFO:root:{'ultrasonic': 43.5, 'thermal': 25.0, 'battery': 10.486, 'orientation': (165.125, 0.25, -178.0625), 'temperature': 36, 'acceleration': (0.01, 0.06, -0.15), 'colour': 'Brown', 'gyro': (-0.375, 0.0, -0.375), 'compass': 200}
+INFO:root:BRICKPIINTERFACE: Exiting the Thermal Sensor Thread
+INFO:root:Exiting
+INFO:root:BRICKPIINTERFACE: Starting thermal sensor thread
+INFO:root:{'orientation': (158.9375, 0.125, -178.125), 'colour': 'Brown', 'gyro': (0.4375, 2.125, 0.1875), 'compass': 197, 'thermal': 25.0, 'acceleration': (-0.44, 0.21, -0.06), 'battery': 10.483, 'temperature': 37, 'ultrasonic': 67.0}
+INFO:root:BRICKPIINTERFACE: Exiting the Thermal Sensor Thread
+INFO:root:Exiting
+INFO:root:BRICKPIINTERFACE: Starting thermal sensor thread
+INFO:root:COLOUR: get_sensor error: Sensor not configured or not supported.
+INFO:root:ULTRASONIC: get_sensor error: Sensor not configured or not supported.
+INFO:root:THERMAL READ: get_sensor error: Sensor not configured or not supported.
+INFO:root:{'colour': 'NOREADING', 'orientation': (7.9375, 8.625, -179.375), 'battery': 10.348, 'thermal': 999.0, 'ultrasonic': 999, 'compass': 284, 'temperature': 33, 'gyro': (-0.1875, -0.0625, -0.1875), 'acceleration': (0.05, -0.02, 0.0)}
+INFO:root:BRICKPIINTERFACE: Exiting the Thermal Sensor Thread
+INFO:root:Exiting
+INFO:root:BRICKPIINTERFACE: Starting thermal sensor thread
+INFO:root:COLOUR: get_sensor error: Sensor not configured or not supported.
+INFO:root:ULTRASONIC: get_sensor error: Sensor not configured or not supported.
+INFO:root:THERMAL READ: get_sensor error: Sensor not configured or not supported.
+INFO:root:{'temperature': 33, 'colour': 'NOREADING', 'ultrasonic': 999, 'battery': 10.329, 'compass': 1, 'gyro': (0.0625, 0.0625, -0.0625), 'orientation': (335.4375, 8.125, -179.125), 'acceleration': (-0.08, 0.03, -0.01), 'thermal': 999.0}
+INFO:root:BRICKPIINTERFACE: Exiting the Thermal Sensor Thread
+INFO:root:Exiting
+INFO:root:BRICKPIINTERFACE: Starting thermal sensor thread
+INFO:root:{'battery': 10.28, 'orientation': (297.375, 8.0625, -179.5), 'temperature': 33, 'ultrasonic': 84.8, 'gyro': (0.0625, 0.625, -0.5625), 'acceleration': (-0.16, -0.05, -0.01), 'compass': 315, 'colour': 'Yellow', 'thermal': 19.0}
+INFO:root:BRICKPIINTERFACE: Exiting the Thermal Sensor Thread
+INFO:root:Exiting

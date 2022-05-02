@@ -1,0 +1,48 @@
+<!-- admin page -->
+
+{% extends 'layout.html' %}
+{% block content %}
+
+{%if tables %} <!-- if there are tables -->
+    <!-- get and display all tables -->
+    <ul class="nav nav-tabs">
+        {% for table in tables: %}
+            <li class="nav-item">
+                {% if table == 'tblUsers': %}
+                    <a class="nav-link active" data-toggle="tab" href="#{{table}}">{{table}}</a>
+                {% else: %}
+                    <a class="nav-link" data-toggle="tab" href="#{{table}}">{{table}}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    <div id="tables" class="tab-content">
+        {% for table in tables: %}
+            {% if table == 'tblUsers': %}
+                <div class="tab-pane fade active show" id={{table}}>
+            {% else: %}
+                <div class="tab-pane fade" id={{table}}>
+            {% endif %}
+                    <table style="width:100%" class="table table-dark">
+                        <!-- get and display table headers -->
+                        <tr>
+                            {% for column in tables[table][0]: %}
+                                <th>{{column.capitalize()}}</th>
+                            {% endfor %}
+                            <th>Select</th>
+                        </tr>
+                        <!-- get and display table details -->
+                        {% for row in tables[table]: %}
+                            <tr>
+                                {% for entry in row: %}
+                                    <td>{{row[entry]}}</td>
+                                {% endfor %}
+                                <td><input type="checkbox" name="selectedentry" value="{{row.values() | firstdictitem}}"></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

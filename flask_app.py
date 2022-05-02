@@ -6,7 +6,6 @@ from interfaces import databaseinterface, camerainterface, soundinterface
 import robot #robot is class that extends the brickpi class
 import global_vars as GLOBALS #load global variables
 import logging, time
-from datetime import *
 
 #Creates the Flask Server Object
 app = Flask(__name__); app.debug = True
@@ -74,6 +73,9 @@ def robotload():
 def robotdashboard():
     if not 'userid' in session:
         return redirect('/')
+    if not "missionId" in session:
+        #return redirect("/mission")
+        session["missionId"] = 1
     enabled = int(GLOBALS.ROBOT != None)
     return render_template('dashboard.html', robot_enabled = enabled )
 
@@ -102,6 +104,36 @@ def sensors():
     return jsonify(data)
 
 # YOUR FLASK CODE------------------------------------------------------------------------
+@app.route('/seedatabase')
+def seedatabase():
+    data = GLOBALS.DATABASE.ViewQuery('SELECT * FROM ')
+    return jsonify(data)
+
+@app.route('/admin', methods=['POST','GET']) # admin page
+def admin():
+    if 'permission' in session:
+        if session['permission'] != 'admin':
+            return redirect('/')
+    else:
+        return redirect('/')
+
+
+    """if request.method == 'POST':
+        listofusers = request.form.getlist('selecteduser')
+        for userid in listofusers:
+            GLOBALS.DATABASE.ModifyQuery("DELETE FROM tblUsers WHERE userid = ? AND accounttype != 'admin'", (userid,))
+"""
+    #displays data
+    tables={}
+    tables['users']=GLOBALS.DATABASE.ViewQuery('SELECT * FROM users')
+    tables['missions']=GLOBALS.DATABASE.ViewQuery(("""SELECT *
+                                                FROM tblExperts
+                                                ORDER BY expertid"""))
+    tables['movements']=GLOBALS.DATABASE.ViewQuery("SELECT * FROM movements")
+    tables['events']=GLOBALS.DATABASE.ViewQuery(("SELECT * FROM events"))
+    
+    #primary_keys = {'tblUsers': 'userid', 'tblExperts': 'expertid', 'tblSubjects': 'subjectid', 'tblExpertSubjects': 'esid', 'tblCertList': 'certname', 'tblExpertCertifications': 'ecid', 'tblBookings': 'bookingid'}
+    return render_template('admin.html', tables=tables)
 
 @app.route('/shoot', methods=['GET','POST'])
 def shoot():
@@ -114,14 +146,22 @@ def shoot():
 def moveforward():
     data = {}
     if GLOBALS.ROBOT:
-        GLOBALS.ROBOT.move_power(30)
+        data["startTime"] = time.time()
+        data["type"] = "forward"
+        data["heading"] = GLOBALS.ROBOT.get_compass_IMU()
+        GLOBALS.ROBOT.move_encoder()
+        GLOBALS.DATABASE.ModifyQuery("INSERT INTO movements (startTime,type,heading,missionId) VALUES (?,?,?,?)",(data["startTime"],data["type"],data["heading"],session["missionId"]))
     return jsonify(data)  
 
 @app.route('/movebackward', methods=['GET','POST'])
 def movebackward():
     data = {}
     if GLOBALS.ROBOT:
-        GLOBALS.ROBOT.move_power(-30)
+        data["startTime"] = time.time()
+        data["type"] = "backward"
+        data["heading"] = GLOBALS.ROBOT.get_compass_IMU()
+        GLOBALS.ROBOT.move_encoder(-1)
+        GLOBALS.DATABASE.ModifyQuery("INSERT INTO movements (startTime,type,heading,missionId) VALUES (?,?,?,?)",(data["startTime"],data["type"],data["heading"],session["missionId"]))
     return jsonify(data)
 
 @app.route('/rotateright', methods=['GET','POST'])
@@ -142,6 +182,10 @@ def rotateleft():
 def stop():
     data = {}
     if GLOBALS.ROBOT:
+        if GLOBALS.ROBOT.CurrentCommand == "move_encoder" or GLOBALS.ROBOT.CurrentCommand == "move_distance_encoder":
+            data["endTime"] = time.time()
+            action = GLOBALS.DATABASE.ViewQuery("SELECT movementId FROM actions WHERE missionId = ? ORDER BY movementId DESC Limit 1",(session["missionId"],))
+            GLOBALS.DATABASE.ModifyQuery("UPDATE movements SET endTime = ? WHERE movementId = ?", (data['endTime'],action))
         GLOBALS.ROBOT.stop_all()
     return jsonify(data) 
 
@@ -159,7 +203,7 @@ def createmission():
         if request.form.get('start-time'):
             starttime = request.form.get('start-time')
         else:
-            starttime = datetime.now().timestamp()
+            starttime = time.time().timestamp()
         # insert into mission
         GLOBALS.DATABASE.ModifyQuery('INSERT INTO mission (location, notes, starttime, userid) VALUES (?,?,?,?)', (location,notes,starttime,userid))
         # select the mission id and save to session data
@@ -169,6 +213,7 @@ def createmission():
 @app.route('/mission', methods=['GET','POST'])
 def mission():
     data = {}
+    data["missions"] = GLOBALS.DATABASE.ViewQuery("SELECT * FROM")
     return render_template('mission.html',data=data)
 
 # allows medic manager to test that all sensors are working

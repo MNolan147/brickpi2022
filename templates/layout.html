@@ -19,32 +19,32 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/" data-ol-has-click-handler="">Robot</a>
+          <a class="navbar-brand" href="/dashboard" data-ol-has-click-handler="">Dashboard</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
       
           <div class="collapse navbar-collapse" id="navbarColor01">
             <ul class="navbar-nav me-auto">
-              <li class="nav-item">
-                <a class="nav-link active" href="/" data-ol-has-click-handler="">Login
-                  <span class="visually-hidden">(current)</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/dashboard" data-ol-has-click-handler="">Dashboard</a>
-              </li>
-              <li class="nav-item">
+              <li>
                 <a class="nav-link" href="/mission" data-ol-has-click-handler="">Mission</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/sensor-view" data-ol-has-click-handler="">Sensor View</a>
-              </li>
+              {% if 'permission' in session %}
+                {% if session['permission'] == "admin" %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/admin" data-ol-has-click-handler="">Admin</a>
+                </li>
+                {% endif %}
+              {% endif %}
             </ul>
             <form class="d-flex">
-                  <a style="color: rgba(255, 255, 255, 0.55) !important" class="nav-link" href="/logout" data-ol-has-click-handler="">Log out</a>
+              {% if 'userid' in session %}
+                <a style="color: rgba(255, 255, 255, 0.55) !important" class="nav-link" href="/logout" data-ol-has-click-handler="">Log out</a>
+              {% else %}
+                <a style="color: rgba(255, 255, 255, 0.55) !important" class="nav-link" href="/" data-ol-has-click-handler="">Log in</a>
+              {% endif %}
               <button class="btn btn-secondary my-2 my-sm-0" type="button" onclick="shutdown();">Exit</button>
-            </form>
+            `</form>
           </div>
         </div>
       </nav>
